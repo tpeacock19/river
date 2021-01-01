@@ -53,7 +53,7 @@ pub fn renderOutput(output: *Output) void {
 
     output.wlr_output.attachRender(null) catch return;
 
-    renderer.begin(output.wlr_output.width, output.wlr_output.height);
+    renderer.begin(@intCast(u32, output.wlr_output.width), @intCast(u32, output.wlr_output.height));
 
     // Find the first visible fullscreen view in the stack if there is one
     var it = ViewStack(View).iter(output.views.first, .forward, output.current.tags, renderFilter);
