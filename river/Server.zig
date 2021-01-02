@@ -29,6 +29,7 @@ const util = @import("util.zig");
 const Config = @import("Config.zig");
 const Control = @import("Control.zig");
 const DecorationManager = @import("DecorationManager.zig");
+const ForeignToplevelManager = @import("ForeignToplevelManager.zig");
 const InputManager = @import("InputManager.zig");
 const LayerSurface = @import("LayerSurface.zig");
 const Output = @import("Output.zig");
@@ -63,6 +64,7 @@ root: Root,
 config: Config,
 control: Control,
 status_manager: StatusManager,
+foreign_toplevel_manager: ForeignToplevelManager,
 
 pub fn init(self: *Self) !void {
     self.wl_server = try wl.Server.create();
@@ -115,6 +117,7 @@ pub fn init(self: *Self) !void {
     try self.input_manager.init(self);
     try self.control.init(self);
     try self.status_manager.init(self);
+    try self.foreign_toplevel_manager.init(self);
 
     // These all free themselves when the wl_server is destroyed
     _ = try wlr.DataDeviceManager.create(self.wl_server);

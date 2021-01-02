@@ -164,12 +164,7 @@ pub fn destroy(self: *Self) void {
     self.dropSavedBuffers();
     self.saved_buffers.deinit();
 
-    if (self.foreign_toplevel_handle) |handle| {
-        //self.foreign_activate.link.remove();
-        //self.foreign_fullscreen.link.remove();
-        //self.foreign_close.link.remove();
-        handle.destroy();
-    }
+    if (self.foreign_toplevel_handle) |handle| handle.destroy();
 
     switch (self.impl) {
         .xdg_toplevel => |*xdg_toplevel| xdg_toplevel.deinit(),
@@ -451,10 +446,7 @@ pub fn map(self: *Self) void {
             self.surface.?.resource.getClient().postNoMemory();
             return;
         };
-
-        //self.foreign_toplevel_handle.?.events.request_activate.add(&self.foreign_activate);
-        //self.foreign_toplevel_handle.?.events.request_fullscreen.add(&self.foreign_fullscreen);
-        //self.foreign_toplevel_handle.?.events.request_close.add(&self.foreign_close);
+        self.foreign_toplevel_handle.?.data = @ptrToInt(self);
 
         if (self.getTitle()) |s| self.foreign_toplevel_handle.?.setTitle(s);
         if (self.getAppId()) |s| self.foreign_toplevel_handle.?.setAppId(s);
@@ -589,34 +581,4 @@ pub fn commitOpacityTransition(self: *Self) void {
     if (!self.incrementOpacity()) {
         self.attachOpacityTimer();
     }
-}
-
-/// Only honors the request if the view is already visible on the seat's
-/// currently focused output. TODO: consider allowing this request to switch
-/// output/tag focus.
-fn handleForeignActivate(
-    listener: *wl.Listener(*wlr.ForeignToplevelHandleV1.event.Activated),
-    event: *wlr.ForeignToplevelHandleV1.event.Activated,
-) void {
-    const self = @fieldParentPtr(Self, "foreign_activate", listener);
-    const seat = @intToPtr(*Seat, event.seat.data);
-    seat.focus(self);
-    self.output.root.startTransaction();
-}
-
-fn handleForeignFullscreen(
-    listener: *wl.Listener(*wlr.ForeignToplevelHandleV1.event.Fullscreen),
-    event: *wlr.ForeignToplevelHandleV1.event.Fullscreen,
-) void {
-    const self = @fieldParentPtr(Self, "foreign_fullscreen", listener);
-    self.pending.fullscreen = event.fullscreen;
-    self.applyPending();
-}
-
-fn handleForeignClose(
-    listener: *wl.Listener(*wlr.ForeignToplevelHandleV1),
-    event: *wlr.ForeignToplevelHandleV1,
-) void {
-    const self = @fieldParentPtr(Self, "foreign_close", listener);
-    self.close();
 }
