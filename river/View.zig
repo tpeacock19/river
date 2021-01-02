@@ -127,12 +127,12 @@ draw_borders: bool = true,
 /// This is created when the view is mapped and destroyed with the view
 foreign_toplevel_handle: ?*wlr.ForeignToplevelHandleV1 = null,
 // zig fmt: off
-foreign_activate: wl.Listener(*wlr.ForeignToplevelHandleV1.event.Activated) =
-    wl.Listener(*wlr.ForeignToplevelHandleV1.event.Activated).init(handleForeignActivate),
-foreign_fullscreen: wl.Listener(*wlr.ForeignToplevelHandleV1.event.Fullscreen) =
-    wl.Listener(*wlr.ForeignToplevelHandleV1.event.Fullscreen).init(handleForeignFullscreen),
-foreign_close: wl.Listener(*wlr.ForeignToplevelHandleV1) =
-    wl.Listener(*wlr.ForeignToplevelHandleV1).init(handleForeignClose),
+//foreign_activate: wl.Listener(*wlr.ForeignToplevelHandleV1.event.Activated) =
+//    wl.Listener(*wlr.ForeignToplevelHandleV1.event.Activated).init(handleForeignActivate),
+//foreign_fullscreen: wl.Listener(*wlr.ForeignToplevelHandleV1.event.Fullscreen) =
+//    wl.Listener(*wlr.ForeignToplevelHandleV1.event.Fullscreen).init(handleForeignFullscreen),
+//foreign_close: wl.Listener(*wlr.ForeignToplevelHandleV1) =
+//    wl.Listener(*wlr.ForeignToplevelHandleV1).init(handleForeignClose),
 // zig fmt: on
 
 pub fn init(self: *Self, output: *Output, tags: u32, surface: anytype) void {
@@ -165,9 +165,9 @@ pub fn destroy(self: *Self) void {
     self.saved_buffers.deinit();
 
     if (self.foreign_toplevel_handle) |handle| {
-        self.foreign_activate.link.remove();
-        self.foreign_fullscreen.link.remove();
-        self.foreign_close.link.remove();
+        //self.foreign_activate.link.remove();
+        //self.foreign_fullscreen.link.remove();
+        //self.foreign_close.link.remove();
         handle.destroy();
     }
 
@@ -445,16 +445,16 @@ pub fn map(self: *Self) void {
 
     if (self.foreign_toplevel_handle == null) {
         self.foreign_toplevel_handle = wlr.ForeignToplevelHandleV1.create(
-            root.server.foreign_toplevel_manager,
+            root.server.foreign_toplevel_info,
         ) catch {
             log.crit(.server, "out of memory", .{});
             self.surface.?.resource.getClient().postNoMemory();
             return;
         };
 
-        self.foreign_toplevel_handle.?.events.request_activate.add(&self.foreign_activate);
-        self.foreign_toplevel_handle.?.events.request_fullscreen.add(&self.foreign_fullscreen);
-        self.foreign_toplevel_handle.?.events.request_close.add(&self.foreign_close);
+        //self.foreign_toplevel_handle.?.events.request_activate.add(&self.foreign_activate);
+        //self.foreign_toplevel_handle.?.events.request_fullscreen.add(&self.foreign_fullscreen);
+        //self.foreign_toplevel_handle.?.events.request_close.add(&self.foreign_close);
 
         if (self.getTitle()) |s| self.foreign_toplevel_handle.?.setTitle(s);
         if (self.getAppId()) |s| self.foreign_toplevel_handle.?.setAppId(s);
