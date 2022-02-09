@@ -111,6 +111,7 @@ pub fn build(b: *zbs.Builder) !void {
     scanner.generate("zwp_pointer_gestures_v1", 3);
     scanner.generate("zxdg_output_manager_v1", 3);
     scanner.generate("zwp_pointer_constraints_v1", 1);
+    scanner.generate("ext_session_lock_manager_v1", 1);
 
     scanner.generate("zriver_control_v1", 1);
     scanner.generate("zriver_status_manager_v1", 2);
